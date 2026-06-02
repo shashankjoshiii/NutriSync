@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an instance of axios
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: process.env.REACT_APP_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -10,16 +10,17 @@ const api = axios.create({
 
 /*
   This interceptor runs before each request.
-  It checks if a token exists in localStorage (meaning the user is logged in).
+  It checks if a token exists in localStorage.
   If it exists, it adds the token to the request's 'x-auth-token' header.
-  This is how protected routes on the backend will recognize an authenticated user.
 */
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
+
     if (token) {
       config.headers['x-auth-token'] = token;
     }
+
     return config;
   },
   (error) => {
@@ -28,4 +29,3 @@ api.interceptors.request.use(
 );
 
 export default api;
-

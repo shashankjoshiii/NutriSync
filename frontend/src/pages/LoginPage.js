@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Link, useNavigate, Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.js';
 import api from '../api/index.js';
 
@@ -12,7 +12,6 @@ const LoginPage = () => {
     const [error, setError] = useState('');
 
     const { login, isAuthenticated } = useContext(AuthContext);
-    const navigate = useNavigate();
 
     const { email, password } = formData;
 
@@ -39,7 +38,9 @@ const LoginPage = () => {
 
             await login(res.data.token);
 
-            navigate('/dashboard');
+            // Force redirect after login
+            window.location.href = '/dashboard';
+
         } catch (err) {
             const errorMessage =
                 err.response?.data?.message ||

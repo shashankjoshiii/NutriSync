@@ -1,43 +1,31 @@
-// server.js
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
+import axios from 'axios';
 
-// Initialize express app
-const app = express();
-const PORT = process.env.PORT || 5000;
+// Create an instance of axios
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-// Middleware
-app.use(cors());
-app.use(express.json()); // for parsing application/json
+/*
+  This interceptor runs before each request.
+  It checks if a token exists in localStorage.
+  If it exists, it adds the token to the request's 'x-auth-token' header.
+*/
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
 
-// --- Database Connection ---
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('MongoDB Connected...');
-  } catch (err) {
-    console.error(err.message);
-    process.exit(1); // Exit process with failure
+    if (token) {
+      config.headers['x-auth-token'] = token;
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-};
-connectDB();
+);
 
-// --- API Routes ---
-app.get('/', (req, res) => {
-    res.send('NutriSync API is running...');
-});
-
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/food', require('./routes/food'));
-
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
+export default api;

@@ -4,7 +4,11 @@ import { AuthContext } from '../context/AuthContext.js';
 import api from '../api/index.js';
 
 const LoginPage = () => {
-    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    });
+
     const [error, setError] = useState('');
 
     const { login, isAuthenticated } = useContext(AuthContext);
@@ -12,19 +16,26 @@ const LoginPage = () => {
 
     const { email, password } = formData;
 
-    // If already authenticated, redirect to dashboard
+    // Redirect if already logged in
     if (isAuthenticated) {
         return <Navigate to="/dashboard" replace />;
     }
 
-    const onChange = e =>
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const onChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
 
-    const onSubmit = async e => {
+    const onSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const res = await api.post('/auth/login', { email, password });
+            const res = await api.post('/auth/login', {
+                email,
+                password
+            });
 
             await login(res.data.token);
 

@@ -10,12 +10,18 @@ const PORT = process.env.PORT || 5000;
 
 // ==================== Middleware ====================
 
-origin: [
-  "http://localhost:5173",
-  "https://nutri-sync-311b7x3rz-shashankjoshiiis-projects.vercel.app",
-],
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://nutri-sync-311b7x3rz-shashankjoshiiis-projects.vercel.app",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "x-auth-token",
+    ],
     credentials: true,
   })
 );

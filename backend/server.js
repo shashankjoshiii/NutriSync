@@ -10,12 +10,23 @@ const PORT = process.env.PORT || 5000;
 
 // ==================== Middleware ====================
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://nutrisync-9w7l.onrender.com",
+];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://nutri-sync-311b7x3rz-shashankjoshiiis-projects.vercel.app",
-    ],
+    origin: function (origin, callback) {
+      // Allow requests with no origin (Postman, mobile apps)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
@@ -26,7 +37,6 @@ app.use(
   })
 );
 
-// Handle preflight requests
 app.options("*", cors());
 
 app.use(express.json());
